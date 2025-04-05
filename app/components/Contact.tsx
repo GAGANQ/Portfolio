@@ -15,23 +15,39 @@ const Contact = () => {
 
   useEffect(() => {
     // Initialize EmailJS with your public key
-    emailjs.init(emailjsConfig.publicKey);
+    try {
+      emailjs.init(emailjsConfig.publicKey);
+      console.log('EmailJS initialized successfully');
+    } catch (error) {
+      console.error('Error initializing EmailJS:', error);
+    }
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!formRef.current) return;
+    if (!formRef.current) {
+      console.error('Form reference is not available');
+      return;
+    }
     
     setIsSubmitting(true);
     setSubmitStatus({ type: null, message: '' });
 
     try {
+      console.log('Sending form with data:', {
+        serviceId: emailjsConfig.serviceId,
+        templateId: emailjsConfig.templateId,
+        formData: new FormData(formRef.current)
+      });
+
       const result = await emailjs.sendForm(
         emailjsConfig.serviceId,
         emailjsConfig.templateId,
         formRef.current,
         emailjsConfig.publicKey
       );
+
+      console.log('EmailJS response:', result);
 
       if (result.text === 'OK') {
         setSubmitStatus({
@@ -40,13 +56,13 @@ const Contact = () => {
         });
         formRef.current.reset();
       } else {
-        throw new Error('Failed to send message');
+        throw new Error(`Failed to send message: ${result.text}`);
       }
     } catch (error) {
       console.error('Error sending message:', error);
       setSubmitStatus({
         type: 'error',
-        message: 'Something went wrong. Please try again later.',
+        message: error instanceof Error ? error.message : 'Something went wrong. Please try again later.',
       });
     } finally {
       setIsSubmitting(false);
