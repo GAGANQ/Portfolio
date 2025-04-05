@@ -65,28 +65,18 @@ export default function Hero() {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="mt-12 flex space-x-4"
         >
-          <button
-            onClick={() => {
-              const element = document.getElementById('contact');
-              if (element) {
-                element.scrollIntoView({ behavior: 'smooth' });
-              }
-            }}
+          <a
+            href="#contact"
             className="bg-blue-600 text-white px-8 py-3 rounded-full hover:bg-blue-700 transition-colors"
           >
             Contact Me
-          </button>
-          <button
-            onClick={() => {
-              const element = document.getElementById('projects');
-              if (element) {
-                element.scrollIntoView({ behavior: 'smooth' });
-              }
-            }}
+          </a>
+          <a
+            href="#projects"
             className="bg-gray-100 text-gray-700 px-8 py-3 rounded-full hover:bg-gray-200 transition-colors"
           >
             View Projects
-          </button>
+          </a>
         </motion.div>
       </div>
     </section>
