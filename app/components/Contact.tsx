@@ -37,8 +37,8 @@ const Contact = () => {
       // Get form data
       const formData = new FormData(formRef.current);
       const templateParams = {
-        from_name: formData.get('user_name'),
-        from_email: formData.get('user_email'),
+        user_name: formData.get('user_name'),
+        user_email: formData.get('user_email'),
         subject: formData.get('subject'),
         message: formData.get('message'),
       };
