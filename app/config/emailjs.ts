@@ -1,10 +1,10 @@
 export const emailjsConfig = {
-  // You can find this in Email Services after creating your Gmail service
-  serviceId: 'service_5zliaqh',  // Your Gmail service ID
+  // Email Services ID
+  serviceId: 'service_5zllaqh',
   
-  // You can find this in Email Templates after saving your template
-  templateId: 'template_m83evaq',  // Your template ID
+  // Email Templates ID
+  templateId: 'template_m83evaq',
   
-  // You can find this in Account -> API Keys
-  publicKey: 'jrtW25p4QyAx1ubOc',  // Your public key
+  // Public Key from Account -> API Keys
+  publicKey: 'jrtW25p4QyAx1ubOc',
 }; 
