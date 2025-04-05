@@ -34,16 +34,21 @@ const Contact = () => {
     setSubmitStatus({ type: null, message: '' });
 
     try {
-      console.log('Sending form with data:', {
-        serviceId: emailjsConfig.serviceId,
-        templateId: emailjsConfig.templateId,
-        formData: new FormData(formRef.current)
-      });
+      // Get form data
+      const formData = new FormData(formRef.current);
+      const templateParams = {
+        from_name: formData.get('user_name'),
+        from_email: formData.get('user_email'),
+        subject: formData.get('subject'),
+        message: formData.get('message'),
+      };
 
-      const result = await emailjs.sendForm(
+      console.log('Sending email with params:', templateParams);
+
+      const result = await emailjs.send(
         emailjsConfig.serviceId,
         emailjsConfig.templateId,
-        formRef.current,
+        templateParams,
         emailjsConfig.publicKey
       );
 
