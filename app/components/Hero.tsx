@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 export default function Hero() {
   return (
-    <section className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-b from-white to-gray-100 pt-16">
+    <section id="hero" className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-b from-white to-gray-100 pt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex flex-col items-center text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -65,18 +65,28 @@ export default function Hero() {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="mt-12 flex space-x-4"
         >
-          <a
-            href="#contact"
+          <button
+            onClick={() => {
+              const element = document.getElementById('contact');
+              if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
             className="bg-blue-600 text-white px-8 py-3 rounded-full hover:bg-blue-700 transition-colors"
           >
             Contact Me
-          </a>
-          <a
-            href="#projects"
+          </button>
+          <button
+            onClick={() => {
+              const element = document.getElementById('projects');
+              if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
             className="bg-gray-100 text-gray-700 px-8 py-3 rounded-full hover:bg-gray-200 transition-colors"
           >
             View Projects
-          </a>
+          </button>
         </motion.div>
       </div>
     </section>
