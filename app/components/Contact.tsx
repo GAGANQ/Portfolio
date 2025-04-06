@@ -8,6 +8,7 @@ import { emailjsConfig } from '../config/emailjs';
 const Contact = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{
     type: 'success' | 'error' | null;
     message: string;
@@ -21,8 +22,18 @@ const Contact = () => {
       // Initialize EmailJS
       emailjs.init(emailjsConfig.publicKey);
       console.log('EmailJS initialized successfully');
+      setIsInitialized(true);
+      
+      // Test if emailjs object is available
+      console.log('EmailJS object:', {
+        isInitialized: true,
+        serviceId: emailjsConfig.serviceId,
+        templateId: emailjsConfig.templateId,
+        hasEmailJS: typeof emailjs !== 'undefined'
+      });
     } catch (error) {
       console.error('Failed to initialize EmailJS:', error);
+      setIsInitialized(false);
     }
   }, []);
 
@@ -115,6 +126,12 @@ const Contact = () => {
     <section id="contact" className="py-20 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto">
+          {!isInitialized && (
+            <div className="mb-8 p-4 bg-yellow-100 text-yellow-700 border-2 border-yellow-500 rounded-lg text-center">
+              Email service is initializing... Please wait.
+            </div>
+          )}
+          
           <h2 className="text-4xl font-bold text-center mb-8">Get In Touch</h2>
           <p className="text-gray-600 text-center mb-12">
             I'm currently open to new opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!
