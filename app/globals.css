@@ -29,6 +29,8 @@ body {
   background-color: black;
   color: white;
   font-family: 'Inter', Arial, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
 html {
@@ -62,7 +64,7 @@ html {
 
 /* Modern Section Styles */
 .section-wrapper {
-  @apply relative backdrop-blur-md bg-white/5 rounded-2xl border border-white/10 shadow-xl;
+  @apply relative backdrop-blur-md bg-black/30 rounded-2xl border border-white/10 shadow-xl;
 }
 
 .section-content {
@@ -71,8 +73,8 @@ html {
 
 /* Glass Cards */
 .glass-card {
-  @apply backdrop-blur-lg bg-white/5 rounded-xl border border-white/10 
-         shadow-lg hover:bg-white/10 transition-all duration-300;
+  @apply backdrop-blur-lg bg-black/30 rounded-xl border border-white/10 
+         shadow-lg hover:bg-black/40 transition-all duration-300;
 }
 
 /* Gradient Borders */
@@ -86,9 +88,33 @@ html {
   @apply bg-black rounded-xl;
 }
 
-/* Gradient Text */
-.gradient-text {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-blue-600;
+/* Animated Gradient Text */
+.animated-gradient-text {
+  background: linear-gradient(
+    to right,
+    #fff,
+    #3b82f6,
+    #1d4ed8,
+    #fff
+  );
+  background-size: 200% auto;
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: shine 8s linear infinite;
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+/* Glowing Text Effect */
+.glow-text {
+  text-shadow: 0 0 10px rgba(59, 130, 246, 0.5),
+               0 0 20px rgba(59, 130, 246, 0.3),
+               0 0 30px rgba(59, 130, 246, 0.2);
 }
 
 /* Hover Effects */
@@ -102,9 +128,28 @@ html {
   background-size: 20px 20px;
 }
 
-/* Glass Effect */
-.glass-effect {
-  @apply backdrop-blur-lg bg-black/30 border border-white/10;
+/* Animated Background */
+.animated-bg {
+  background: linear-gradient(
+    45deg,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(17, 24, 39, 1) 50%,
+    rgba(0, 0, 0, 1) 100%
+  );
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+}
+
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 /* Smooth transitions */

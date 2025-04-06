@@ -5,18 +5,18 @@ import Image from 'next/image';
 
 export default function Hero() {
   return (
-    <section id="hero" className="relative min-h-screen flex items-center dot-pattern">
+    <section id="hero" className="relative min-h-screen flex items-center animated-bg">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <Image
           src="/profile.jpg"
           alt="Gagandeep Dhaliwal"
           fill
-          className="object-cover opacity-50"
+          className="object-cover opacity-40"
           priority
           quality={100}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-black/90"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/80 to-black/90"></div>
       </div>
 
       {/* Content */}
@@ -27,32 +27,58 @@ export default function Hero() {
           transition={{ duration: 0.8 }}
           className="glass-card p-8 md:p-12 max-w-3xl"
         >
-          <h2 className="gradient-text text-xl md:text-2xl font-medium mb-4">
+          <motion.h2
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="animated-gradient-text text-xl md:text-2xl font-medium mb-4"
+          >
             Hello, I'm
-          </h2>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6">
-            Gagandeep Dhaliwal
-          </h1>
-          <div className="gradient-border mb-8">
-            <p className="text-xl md:text-2xl text-gray-300 p-4">
-              Accounts Payable & Receivable Specialist | Payroll Administrator
-            </p>
-          </div>
-          <p className="text-lg text-gray-400 mb-12 max-w-2xl">
-            Results-driven professional with 4+ years of experience in financial management, 
-            accounting operations, and ERP system optimization. Expert in Microsoft Dynamics 365, 
-            SAP, QuickBooks, and Power BI.
-          </p>
+          </motion.h2>
+          
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
+            <h1 className="glow-text animated-gradient-text text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-wider">
+              Gagandeep
+              <br />
+              Dhaliwal
+            </h1>
+          </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="gradient-border mb-8"
+          >
+            <p className="text-xl md:text-2xl text-gray-300 p-4">
+              Accounts Payable & Receivable Specialist | Payroll Administrator
+            </p>
+          </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+            className="text-lg text-gray-400 mb-12 max-w-2xl"
+          >
+            Results-driven professional with 4+ years of experience in financial management, 
+            accounting operations, and ERP system optimization. Expert in Microsoft Dynamics 365, 
+            SAP, QuickBooks, and Power BI.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 1 }}
             className="flex flex-wrap gap-4"
           >
             <a
               href="#contact"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg transition-colors duration-300 flex items-center hover-lift"
+              className="bg-blue-600/80 hover:bg-blue-600 text-white px-8 py-3 rounded-lg transition-all duration-300 flex items-center hover-lift backdrop-blur-sm"
             >
               Contact Me
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
@@ -71,11 +97,11 @@ export default function Hero() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.6 }}
+            transition={{ duration: 0.5, delay: 1.2 }}
             className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
           >
             <div className="flex flex-col items-center text-white">
-              <span className="text-sm mb-2">Scroll Down</span>
+              <span className="text-sm mb-2 opacity-70">Scroll Down</span>
               <div className="glass-card w-6 h-10 flex justify-center p-2">
                 <motion.div
                   animate={{
@@ -86,7 +112,7 @@ export default function Hero() {
                     repeat: Infinity,
                     repeatType: "loop",
                   }}
-                  className="w-1 h-1 bg-white rounded-full"
+                  className="w-1 h-1 bg-blue-400 rounded-full"
                 />
               </div>
             </div>
