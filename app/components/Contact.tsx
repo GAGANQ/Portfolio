@@ -37,6 +37,16 @@ const Contact = () => {
 
     try {
       const form = formRef.current;
+      
+      // Check if environment variables are available
+      const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+      const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+      const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+
+      if (!serviceId || !templateId || !publicKey) {
+        throw new Error('EmailJS configuration is incomplete. Please check environment variables.');
+      }
+
       console.log('Sending form data:', {
         name: form.user_name.value,
         email: form.user_email.value,
@@ -45,10 +55,10 @@ const Contact = () => {
       });
 
       const result = await emailjs.sendForm(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+        serviceId,
+        templateId,
         form,
-        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+        publicKey
       );
 
       console.log('EmailJS Response:', result);
