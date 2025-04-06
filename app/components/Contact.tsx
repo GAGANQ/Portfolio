@@ -159,28 +159,30 @@ const Contact = () => {
               ></textarea>
             </div>
 
-            <div className="text-center space-y-4">
+            <div className="flex flex-col items-center space-y-4">
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`px-8 py-3 bg-blue-600 text-white rounded-lg font-medium transition-all
+                className={`w-full md:w-auto px-8 py-3 bg-blue-600 text-white rounded-lg font-medium transition-all
                   ${isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'}`}
               >
                 {isSubmitting ? 'Sending...' : 'Send Message'}
               </button>
 
-              {submitStatus.message && (
-                <div
-                  className={`text-center p-4 rounded-lg ${
+              {(isSubmitting || submitStatus.message) && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`w-full md:w-96 text-center p-4 rounded-lg shadow-md ${
                     submitStatus.type === 'success' 
-                      ? 'bg-green-100 text-green-700' 
+                      ? 'bg-green-100 text-green-700 border border-green-300' 
                       : submitStatus.type === 'error'
-                      ? 'bg-red-100 text-red-700'
-                      : 'bg-blue-100 text-blue-700'
+                      ? 'bg-red-100 text-red-700 border border-red-300'
+                      : 'bg-blue-100 text-blue-700 border border-blue-300'
                   }`}
                 >
-                  {submitStatus.message}
-                </div>
+                  {isSubmitting ? 'Sending your message...' : submitStatus.message}
+                </motion.div>
               )}
             </div>
           </form>
