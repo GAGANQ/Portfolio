@@ -2,12 +2,7 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import emailjs from '@emailjs/browser';
-
-const EMAILJS_CONFIG = {
-  serviceId: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || '',
-  templateId: process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || '',
-  publicKey: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || ''
-};
+import { emailConfig } from '../config/email';
 
 const Contact = () => {
   const formRef = useRef<HTMLFormElement>(null);
@@ -19,20 +14,16 @@ const Contact = () => {
 
   useEffect(() => {
     const initEmailJS = () => {
-      if (!EMAILJS_CONFIG.publicKey) {
-        console.error('EmailJS public key is not set');
-        return;
-      }
       try {
-        emailjs.init(EMAILJS_CONFIG.publicKey);
-        console.log('EmailJS initialized in Contact component with key:', EMAILJS_CONFIG.publicKey);
+        emailjs.init(emailConfig.publicKey);
+        console.log('EmailJS initialized in Contact component');
       } catch (error) {
         console.error('Failed to initialize EmailJS:', error);
       }
     };
 
     // Initialize if not already initialized
-    if (typeof window !== 'undefined' && !(window as any).emailjs?.init) {
+    if (typeof window !== 'undefined') {
       initEmailJS();
     }
   }, []);
@@ -46,14 +37,6 @@ const Contact = () => {
       return;
     }
 
-    if (!EMAILJS_CONFIG.serviceId || !EMAILJS_CONFIG.templateId || !EMAILJS_CONFIG.publicKey) {
-      setSubmitStatus({
-        type: 'error',
-        message: 'Email service configuration is missing. Please try again later or email me directly.',
-      });
-      return;
-    }
-
     setIsSubmitting(true);
     setSubmitStatus({
       type: null,
@@ -64,9 +47,9 @@ const Contact = () => {
       const form = formRef.current;
 
       console.log('Using EmailJS configuration:', {
-        serviceId: EMAILJS_CONFIG.serviceId,
-        templateId: EMAILJS_CONFIG.templateId,
-        publicKey: EMAILJS_CONFIG.publicKey.substring(0, 5) + '...'
+        serviceId: emailConfig.serviceId,
+        templateId: emailConfig.templateId,
+        publicKey: emailConfig.publicKey.substring(0, 5) + '...'
       });
 
       const formData = {
@@ -79,10 +62,10 @@ const Contact = () => {
       console.log('Sending form data:', formData);
 
       const result = await emailjs.sendForm(
-        EMAILJS_CONFIG.serviceId,
-        EMAILJS_CONFIG.templateId,
+        emailConfig.serviceId,
+        emailConfig.templateId,
         form,
-        EMAILJS_CONFIG.publicKey
+        emailConfig.publicKey
       );
 
       console.log('EmailJS Response:', result);

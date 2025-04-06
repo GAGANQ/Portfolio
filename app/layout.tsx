@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { emailConfig } from "./config/email";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,8 +15,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || '';
-  
   return (
     <html lang="en" className="scroll-smooth">
       <head>
@@ -28,8 +27,8 @@ export default function RootLayout({
             __html: `
               window.onload = function() {
                 if (window.emailjs) {
-                  emailjs.init('${publicKey}');
-                  console.log('EmailJS initialized with key:', '${publicKey}');
+                  emailjs.init('${emailConfig.publicKey}');
+                  console.log('EmailJS initialized with key:', '${emailConfig.publicKey}');
                 } else {
                   console.error('EmailJS not loaded');
                 }
