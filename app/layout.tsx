@@ -14,8 +14,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
-  
   return (
     <html lang="en" className="scroll-smooth">
       <head>
@@ -24,29 +22,14 @@ export default function RootLayout({
           src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
           defer
         ></script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.onload = function() {
-                if (window.emailjs) {
-                  const publicKey = "${publicKey}";
-                  if (!publicKey) {
-                    console.error('EmailJS public key is not set');
-                    return;
-                  }
-                  try {
-                    emailjs.init(publicKey);
-                    console.log('EmailJS initialized successfully');
-                  } catch (error) {
-                    console.error('Failed to initialize EmailJS:', error);
-                  }
-                } else {
-                  console.error('EmailJS not found');
-                }
-              }
-            `
-          }}
-        />
+        <script id="emailjs-init" defer>
+          {`
+            (function() {
+              emailjs.init('${process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY}');
+              console.log('EmailJS initialized');
+            })();
+          `}
+        </script>
       </head>
       <body className={inter.className}>{children}</body>
     </html>

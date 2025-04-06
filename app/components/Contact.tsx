@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import emailjs from '@emailjs/browser';
 
 const Contact = () => {
@@ -11,21 +11,20 @@ const Contact = () => {
     message: string;
   }>({ type: null, message: '' });
 
+  useEffect(() => {
+    // Initialize EmailJS if not already initialized
+    if (!(window as any).emailjs?.init) {
+      emailjs.init(process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!);
+      console.log('EmailJS initialized in Contact component');
+    }
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log('Form submission started');
     
     if (!formRef.current) {
       console.error('Form reference is not available');
-      return;
-    }
-
-    if (!(window as any).emailjs) {
-      console.error('EmailJS not loaded');
-      setSubmitStatus({
-        type: 'error',
-        message: 'Email service not initialized. Please try again in a few seconds.',
-      });
       return;
     }
 
@@ -47,12 +46,21 @@ const Contact = () => {
         throw new Error('EmailJS configuration is incomplete. Please check environment variables.');
       }
 
+      console.log('Form configuration:', {
+        serviceId,
+        templateId,
+        publicKey: publicKey.substring(0, 5) + '...' // Log only first 5 chars for security
+      });
+
       console.log('Sending form data:', {
         name: form.user_name.value,
         email: form.user_email.value,
         subject: form.subject.value,
         message: form.message.value
       });
+
+      // Re-initialize EmailJS just in case
+      emailjs.init(publicKey);
 
       const result = await emailjs.sendForm(
         serviceId,
