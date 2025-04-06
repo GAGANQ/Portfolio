@@ -46,7 +46,7 @@ export default function Projects() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.2 }}
               viewport={{ once: true }}
-              className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow p-6"
+              className="glass-card overflow-hidden hover:shadow-xl transition-shadow p-6"
             >
               <h3 className="text-xl font-semibold text-gray-900 mb-2">{project.title}</h3>
               <p className="text-gray-600 mb-4">{project.description}</p>

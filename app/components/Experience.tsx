@@ -46,7 +46,7 @@ const experiences = [
 
 export default function Experience() {
   return (
-    <section id="experience" className="py-20 bg-white">
+    <section id="experience" className="py-20 bg-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -75,7 +75,7 @@ export default function Experience() {
               }`}
             >
               <div className="md:w-5/12">
-                <div className="bg-white p-6 rounded-lg shadow-lg">
+                <div className="glass-card p-6 rounded-lg shadow-lg">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-xl font-semibold text-gray-900">{experience.position}</h3>
                     <span className="text-sm text-gray-500">{experience.period}</span>
