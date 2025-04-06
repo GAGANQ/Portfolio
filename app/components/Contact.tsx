@@ -12,10 +12,23 @@ const Contact = () => {
   }>({ type: null, message: '' });
 
   useEffect(() => {
-    // Initialize EmailJS if not already initialized
-    if (!(window as any).emailjs?.init) {
-      emailjs.init(process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!);
-      console.log('EmailJS initialized in Contact component');
+    const initEmailJS = () => {
+      const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+      if (!publicKey) {
+        console.error('EmailJS public key is not set');
+        return;
+      }
+      try {
+        emailjs.init(publicKey);
+        console.log('EmailJS initialized in Contact component');
+      } catch (error) {
+        console.error('Failed to initialize EmailJS:', error);
+      }
+    };
+
+    // Initialize if not already initialized
+    if (typeof window !== 'undefined' && !(window as any).emailjs?.init) {
+      initEmailJS();
     }
   }, []);
 
@@ -46,21 +59,20 @@ const Contact = () => {
         throw new Error('EmailJS configuration is incomplete. Please check environment variables.');
       }
 
-      console.log('Form configuration:', {
+      console.log('Using EmailJS configuration:', {
         serviceId,
         templateId,
-        publicKey: publicKey.substring(0, 5) + '...' // Log only first 5 chars for security
+        publicKey: publicKey.substring(0, 5) + '...'
       });
 
-      console.log('Sending form data:', {
+      const formData = {
         name: form.user_name.value,
         email: form.user_email.value,
         subject: form.subject.value,
         message: form.message.value
-      });
+      };
 
-      // Re-initialize EmailJS just in case
-      emailjs.init(publicKey);
+      console.log('Sending form data:', formData);
 
       const result = await emailjs.sendForm(
         serviceId,
@@ -80,11 +92,11 @@ const Contact = () => {
       } else {
         throw new Error('Failed to send message');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending message:', error);
       setSubmitStatus({
         type: 'error',
-        message: 'Failed to send message. Please try again or email me directly.',
+        message: error.message || 'Failed to send message. Please try again or email me directly.',
       });
     } finally {
       setIsSubmitting(false);

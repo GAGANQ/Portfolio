@@ -20,16 +20,21 @@ export default function RootLayout({
         <script 
           type="text/javascript" 
           src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
-          defer
         ></script>
-        <script id="emailjs-init" defer>
-          {`
-            (function() {
-              emailjs.init('${process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY}');
-              console.log('EmailJS initialized');
-            })();
-          `}
-        </script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.onload = function() {
+                if (window.emailjs) {
+                  emailjs.init("${process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY}");
+                  console.log('EmailJS initialized with key:', "${process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY}");
+                } else {
+                  console.error('EmailJS not loaded');
+                }
+              }
+            `
+          }}
+        />
       </head>
       <body className={inter.className}>{children}</body>
     </html>
