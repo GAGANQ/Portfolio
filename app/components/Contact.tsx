@@ -23,7 +23,6 @@ const Contact = () => {
       console.log('EmailJS Config:', {
         serviceId: emailjsConfig.serviceId,
         templateId: emailjsConfig.templateId,
-        // Don't log the full public key for security
         publicKey: emailjsConfig.publicKey.substring(0, 4) + '...'
       });
     } catch (error) {
@@ -31,8 +30,16 @@ const Contact = () => {
     }
   }, []);
 
+  // Debug state changes
+  useEffect(() => {
+    console.log('Submit status changed:', submitStatus);
+    console.log('Is submitting:', isSubmitting);
+  }, [submitStatus, isSubmitting]);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log('Form submission started');
+    
     if (!formRef.current) {
       console.error('Form reference is not available');
       return;
@@ -40,7 +47,7 @@ const Contact = () => {
     
     // Clear previous status and set submitting state
     setIsSubmitting(true);
-    setSubmitStatus({ type: null, message: '' });
+    setSubmitStatus({ type: null, message: 'Starting submission...' });
 
     try {
       // Get form data
@@ -51,18 +58,7 @@ const Contact = () => {
       const message = form.message.value;
 
       // Log the actual values being sent
-      console.log('Preparing to send email with values:', {
-        name,
-        email,
-        subject,
-        message
-      });
-
-      // Show sending state in UI
-      setSubmitStatus({
-        type: null,
-        message: 'Preparing to send your message...'
-      });
+      console.log('Form values:', { name, email, subject, message });
 
       // Create template parameters object
       const templateParams = {
@@ -72,10 +68,15 @@ const Contact = () => {
         message: message
       };
 
-      console.log('Sending email with template params:', templateParams);
+      console.log('Sending with params:', templateParams);
 
-      // Send the actual email
-      console.log('Attempting to send email...');
+      // Update UI to show sending state
+      setSubmitStatus({
+        type: null,
+        message: 'Sending your message...'
+      });
+
+      // Send the email
       const result = await emailjs.send(
         emailjsConfig.serviceId,
         emailjsConfig.templateId,
@@ -88,17 +89,17 @@ const Contact = () => {
       if (result.text === 'OK') {
         setSubmitStatus({
           type: 'success',
-          message: 'Thank you for your message! I will get back to you soon.',
+          message: 'Thank you! Your message has been sent successfully.',
         });
         form.reset();
       } else {
         throw new Error(`Failed to send message: ${result.text}`);
       }
     } catch (error: any) {
-      console.error('Detailed error sending message:', error);
+      console.error('Error details:', error);
       setSubmitStatus({
         type: 'error',
-        message: `Failed to send message: ${error.message || 'Unknown error'}. Please try again or contact me directly via email.`,
+        message: 'Failed to send message. Please try again or email me directly.',
       });
     } finally {
       setIsSubmitting(false);
@@ -180,27 +181,52 @@ const Contact = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`w-full md:w-auto px-8 py-3 bg-blue-600 text-white rounded-lg font-medium transition-all
-                  ${isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'}`}
+                className={`w-full md:w-auto min-w-[200px] px-8 py-3 text-white rounded-lg font-medium transition-all
+                  ${isSubmitting 
+                    ? 'bg-blue-400 cursor-not-allowed' 
+                    : 'bg-blue-600 hover:bg-blue-700'}`}
               >
-                {isSubmitting ? 'Sending...' : 'Send Message'}
+                <span className="flex items-center justify-center">
+                  {isSubmitting && (
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                  )}
+                  {isSubmitting ? 'Sending...' : 'Send Message'}
+                </span>
               </button>
 
-              {submitStatus.message && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={`w-full text-center p-4 rounded-lg ${
-                    submitStatus.type === 'success' 
-                      ? 'bg-green-100 text-green-700 border border-green-300' 
-                      : submitStatus.type === 'error'
-                      ? 'bg-red-100 text-red-700 border border-red-300'
-                      : 'bg-blue-100 text-blue-700 border border-blue-300'
-                  }`}
-                >
-                  {submitStatus.message}
-                </motion.div>
-              )}
+              {/* Always show the status container, but control visibility with opacity */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: submitStatus.message ? 1 : 0 }}
+                className={`w-full p-4 rounded-lg text-center ${
+                  submitStatus.type === 'success'
+                    ? 'bg-green-100 text-green-700 border-2 border-green-500'
+                    : submitStatus.type === 'error'
+                    ? 'bg-red-100 text-red-700 border-2 border-red-500'
+                    : 'bg-blue-100 text-blue-700 border-2 border-blue-500'
+                }`}
+                style={{ 
+                  display: submitStatus.message ? 'block' : 'none',
+                  marginTop: '1rem'
+                }}
+              >
+                <div className="flex items-center justify-center">
+                  {submitStatus.type === 'success' && (
+                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                  {submitStatus.type === 'error' && (
+                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                  <span className="font-medium">{submitStatus.message}</span>
+                </div>
+              </motion.div>
             </div>
           </form>
 
