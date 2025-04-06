@@ -15,6 +15,18 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Create a safe script that doesn't rely on string interpolation
+  const initScript = `
+    window.onload = function() {
+      if (window.emailjs) {
+        emailjs.init("yxeRBtm6KeO1vNCcC");
+        console.log("EmailJS initialized with key: yxeRBtm6KeO1vNCcC");
+      } else {
+        console.error("EmailJS not loaded");
+      }
+    }
+  `;
+
   return (
     <html lang="en" className="scroll-smooth">
       <head>
@@ -24,16 +36,7 @@ export default function RootLayout({
         ></script>
         <script
           dangerouslySetInnerHTML={{
-            __html: `
-              window.onload = function() {
-                if (window.emailjs) {
-                  emailjs.init('${emailConfig.publicKey}');
-                  console.log('EmailJS initialized with key:', '${emailConfig.publicKey}');
-                } else {
-                  console.error('EmailJS not loaded');
-                }
-              }
-            `
+            __html: initScript
           }}
         />
       </head>

@@ -2,7 +2,13 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import emailjs from '@emailjs/browser';
-import { emailConfig } from '../config/email';
+
+// Add type definition for window.emailjs
+declare global {
+  interface Window {
+    emailjs: typeof emailjs;
+  }
+}
 
 const Contact = () => {
   const formRef = useRef<HTMLFormElement>(null);
@@ -13,18 +19,16 @@ const Contact = () => {
   }>({ type: null, message: '' });
 
   useEffect(() => {
-    const initEmailJS = () => {
+    // Initialize EmailJS
+    if (typeof window !== 'undefined' && window.emailjs) {
       try {
-        emailjs.init(emailConfig.publicKey);
+        window.emailjs.init("yxeRBtm6KeO1vNCcC");
         console.log('EmailJS initialized in Contact component');
       } catch (error) {
         console.error('Failed to initialize EmailJS:', error);
       }
-    };
-
-    // Initialize if not already initialized
-    if (typeof window !== 'undefined') {
-      initEmailJS();
+    } else {
+      console.error('EmailJS not available');
     }
   }, []);
 
@@ -46,26 +50,16 @@ const Contact = () => {
     try {
       const form = formRef.current;
 
-      console.log('Using EmailJS configuration:', {
-        serviceId: emailConfig.serviceId,
-        templateId: emailConfig.templateId,
-        publicKey: emailConfig.publicKey.substring(0, 5) + '...'
-      });
-
-      const formData = {
-        name: form.user_name.value,
-        email: form.user_email.value,
-        subject: form.subject.value,
-        message: form.message.value
-      };
-
-      console.log('Sending form data:', formData);
+      // Re-initialize EmailJS just in case
+      if (window.emailjs) {
+        window.emailjs.init("yxeRBtm6KeO1vNCcC");
+      }
 
       const result = await emailjs.sendForm(
-        emailConfig.serviceId,
-        emailConfig.templateId,
+        "service_5zllaqh",
+        "template_m83evaq",
         form,
-        emailConfig.publicKey
+        "yxeRBtm6KeO1vNCcC"
       );
 
       console.log('EmailJS Response:', result);
