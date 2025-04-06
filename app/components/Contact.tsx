@@ -18,6 +18,14 @@ const Contact = () => {
     try {
       emailjs.init(emailjsConfig.publicKey);
       console.log('EmailJS initialized successfully');
+      
+      // Log config for debugging
+      console.log('EmailJS Config:', {
+        serviceId: emailjsConfig.serviceId,
+        templateId: emailjsConfig.templateId,
+        // Don't log the full public key for security
+        publicKey: emailjsConfig.publicKey.substring(0, 4) + '...'
+      });
     } catch (error) {
       console.error('Error initializing EmailJS:', error);
     }
@@ -43,26 +51,31 @@ const Contact = () => {
       const message = form.message.value;
 
       // Log the actual values being sent
-      console.log('Sending form with values:', {
+      console.log('Preparing to send email with values:', {
         name,
         email,
         subject,
         message
       });
 
+      // Show sending state in UI
+      setSubmitStatus({
+        type: null,
+        message: 'Preparing to send your message...'
+      });
+
+      // Create template parameters object
       const templateParams = {
         user_name: name,
         user_email: email,
         subject: subject,
-        message: message,
+        message: message
       };
 
-      // Show sending state
-      setSubmitStatus({
-        type: null,
-        message: 'Sending your message...'
-      });
+      console.log('Sending email with template params:', templateParams);
 
+      // Send the actual email
+      console.log('Attempting to send email...');
       const result = await emailjs.send(
         emailjsConfig.serviceId,
         emailjsConfig.templateId,
@@ -70,7 +83,7 @@ const Contact = () => {
         emailjsConfig.publicKey
       );
 
-      console.log('EmailJS response:', result);
+      console.log('EmailJS Response:', result);
 
       if (result.text === 'OK') {
         setSubmitStatus({
@@ -81,11 +94,11 @@ const Contact = () => {
       } else {
         throw new Error(`Failed to send message: ${result.text}`);
       }
-    } catch (error) {
-      console.error('Error sending message:', error);
+    } catch (error: any) {
+      console.error('Detailed error sending message:', error);
       setSubmitStatus({
         type: 'error',
-        message: 'Failed to send message. Please try again or contact me directly via email.',
+        message: `Failed to send message: ${error.message || 'Unknown error'}. Please try again or contact me directly via email.`,
       });
     } finally {
       setIsSubmitting(false);
@@ -101,7 +114,7 @@ const Contact = () => {
             I'm currently open to new opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!
           </p>
 
-          <form ref={formRef} onSubmit={handleSubmit} className="space-y-6 relative">
+          <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="user_name" className="block text-sm font-medium text-gray-700 mb-1">
@@ -167,25 +180,17 @@ const Contact = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`relative w-full md:w-auto min-w-[200px] px-8 py-3 bg-blue-600 text-white rounded-lg font-medium transition-all
+                className={`w-full md:w-auto px-8 py-3 bg-blue-600 text-white rounded-lg font-medium transition-all
                   ${isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'}`}
               >
-                <span className={isSubmitting ? 'invisible' : ''}>Send Message</span>
-                {isSubmitting && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                  </div>
-                )}
+                {isSubmitting ? 'Sending...' : 'Send Message'}
               </button>
 
-              {(isSubmitting || submitStatus.message) && (
+              {submitStatus.message && (
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className={`fixed top-4 right-4 z-50 w-96 p-4 rounded-lg shadow-lg ${
+                  className={`w-full text-center p-4 rounded-lg ${
                     submitStatus.type === 'success' 
                       ? 'bg-green-100 text-green-700 border border-green-300' 
                       : submitStatus.type === 'error'
@@ -193,25 +198,7 @@ const Contact = () => {
                       : 'bg-blue-100 text-blue-700 border border-blue-300'
                   }`}
                 >
-                  <div className="flex items-center">
-                    {submitStatus.type === 'success' && (
-                      <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                    )}
-                    {submitStatus.type === 'error' && (
-                      <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                      </svg>
-                    )}
-                    {!submitStatus.type && (
-                      <svg className="animate-spin -ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                    )}
-                    <span>{isSubmitting ? 'Sending your message...' : submitStatus.message}</span>
-                  </div>
+                  {submitStatus.message}
                 </motion.div>
               )}
             </div>
