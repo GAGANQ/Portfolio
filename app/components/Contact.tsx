@@ -1,41 +1,15 @@
 'use client';
 
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import emailjs from '@emailjs/browser';
-import { motion } from 'framer-motion';
-import { emailjsConfig } from '../config/emailjs';
 
 const Contact = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isInitialized, setIsInitialized] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<{
     type: 'success' | 'error' | null;
     message: string;
   }>({ type: null, message: '' });
-
-  useEffect(() => {
-    // Log that we're attempting to initialize
-    console.log('Attempting to initialize EmailJS...');
-    
-    try {
-      // Initialize EmailJS
-      emailjs.init(emailjsConfig.publicKey);
-      console.log('EmailJS initialized successfully');
-      setIsInitialized(true);
-      
-      // Test if emailjs object is available
-      console.log('EmailJS object:', {
-        isInitialized: true,
-        serviceId: emailjsConfig.serviceId,
-        templateId: emailjsConfig.templateId,
-        hasEmailJS: typeof emailjs !== 'undefined'
-      });
-    } catch (error) {
-      console.error('Failed to initialize EmailJS:', error);
-      setIsInitialized(false);
-    }
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -46,7 +20,6 @@ const Contact = () => {
       return;
     }
 
-    // Set submitting state immediately
     setIsSubmitting(true);
     setSubmitStatus({
       type: null,
@@ -54,18 +27,19 @@ const Contact = () => {
     });
 
     try {
-      // Get form data
       const form = formRef.current;
-      
-      // Log that we're about to send
-      console.log('Preparing to send email...');
+      console.log('Sending form data:', {
+        name: form.user_name.value,
+        email: form.user_email.value,
+        subject: form.subject.value,
+        message: form.message.value
+      });
 
-      // Try sending directly with emailjs.sendForm first
       const result = await emailjs.sendForm(
-        emailjsConfig.serviceId,
-        emailjsConfig.templateId,
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
         form,
-        emailjsConfig.publicKey
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
       );
 
       console.log('EmailJS Response:', result);
@@ -79,44 +53,12 @@ const Contact = () => {
       } else {
         throw new Error('Failed to send message');
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error sending message:', error);
-      
-      // Try alternative method if first method fails
-      try {
-        const form = formRef.current;
-        const templateParams = {
-          user_name: form.user_name.value,
-          user_email: form.user_email.value,
-          subject: form.subject.value,
-          message: form.message.value
-        };
-
-        console.log('Trying alternative send method...');
-        
-        const result = await emailjs.send(
-          emailjsConfig.serviceId,
-          emailjsConfig.templateId,
-          templateParams,
-          emailjsConfig.publicKey
-        );
-
-        if (result.text === 'OK') {
-          setSubmitStatus({
-            type: 'success',
-            message: 'Message sent successfully! Thank you for reaching out.',
-          });
-          form.reset();
-        } else {
-          throw new Error('Failed to send message');
-        }
-      } catch (secondError: any) {
-        console.error('Both send methods failed:', { error, secondError });
-        setSubmitStatus({
-          type: 'error',
-          message: 'Failed to send message. Please try again or email me directly.',
-        });
-      }
+      setSubmitStatus({
+        type: 'error',
+        message: 'Failed to send message. Please try again or email me directly.',
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -126,12 +68,6 @@ const Contact = () => {
     <section id="contact" className="py-20 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto">
-          {!isInitialized && (
-            <div className="mb-8 p-4 bg-yellow-100 text-yellow-700 border-2 border-yellow-500 rounded-lg text-center">
-              Email service is initializing... Please wait.
-            </div>
-          )}
-          
           <h2 className="text-4xl font-bold text-center mb-8">Get In Touch</h2>
           <p className="text-gray-600 text-center mb-12">
             I'm currently open to new opportunities. Whether you have a question or just want to say hi, I'll try my best to get back to you!
@@ -213,31 +149,31 @@ const Contact = () => {
                 </span>
               </button>
 
-              {/* Always show status container */}
-              <div
-                className={`w-full p-4 rounded-lg text-center transition-all duration-300 ${
-                  !submitStatus.message ? 'opacity-0' :
-                  submitStatus.type === 'success'
-                    ? 'bg-green-100 text-green-700 border-2 border-green-500'
-                    : submitStatus.type === 'error'
-                    ? 'bg-red-100 text-red-700 border-2 border-red-500'
-                    : 'bg-blue-100 text-blue-700 border-2 border-blue-500'
-                }`}
-              >
-                <div className="flex items-center justify-center">
-                  {submitStatus.type === 'success' && (
-                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                  )}
-                  {submitStatus.type === 'error' && (
-                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                    </svg>
-                  )}
-                  <span className="font-medium">{submitStatus.message}</span>
+              {submitStatus.message && (
+                <div
+                  className={`w-full p-4 rounded-lg text-center ${
+                    submitStatus.type === 'success'
+                      ? 'bg-green-100 text-green-700 border-2 border-green-500'
+                      : submitStatus.type === 'error'
+                      ? 'bg-red-100 text-red-700 border-2 border-red-500'
+                      : 'bg-blue-100 text-blue-700 border-2 border-blue-500'
+                  }`}
+                >
+                  <div className="flex items-center justify-center">
+                    {submitStatus.type === 'success' && (
+                      <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                    {submitStatus.type === 'error' && (
+                      <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                    <span className="font-medium">{submitStatus.message}</span>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </form>
 
