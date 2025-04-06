@@ -13,28 +13,27 @@ const Contact = () => {
     message: string;
   }>({ type: null, message: '' });
 
+  // Add this to verify EmailJS is loaded
+  const [isEmailJSLoaded, setIsEmailJSLoaded] = useState(false);
+
   useEffect(() => {
     // Initialize EmailJS with your public key
     try {
       emailjs.init(emailjsConfig.publicKey);
-      console.log('EmailJS initialized successfully');
-      
-      // Log config for debugging
-      console.log('EmailJS Config:', {
+      setIsEmailJSLoaded(true);
+      console.log('EmailJS initialized with config:', {
         serviceId: emailjsConfig.serviceId,
         templateId: emailjsConfig.templateId,
         publicKey: emailjsConfig.publicKey.substring(0, 4) + '...'
       });
     } catch (error) {
       console.error('Error initializing EmailJS:', error);
+      setSubmitStatus({
+        type: 'error',
+        message: 'Failed to initialize email service. Please try again later.',
+      });
     }
   }, []);
-
-  // Debug state changes
-  useEffect(() => {
-    console.log('Submit status changed:', submitStatus);
-    console.log('Is submitting:', isSubmitting);
-  }, [submitStatus, isSubmitting]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -42,6 +41,15 @@ const Contact = () => {
     
     if (!formRef.current) {
       console.error('Form reference is not available');
+      return;
+    }
+
+    if (!isEmailJSLoaded) {
+      console.error('EmailJS not initialized');
+      setSubmitStatus({
+        type: 'error',
+        message: 'Email service not initialized. Please refresh the page and try again.',
+      });
       return;
     }
     
@@ -68,7 +76,11 @@ const Contact = () => {
         message: message
       };
 
-      console.log('Sending with params:', templateParams);
+      console.log('Attempting to send email with params:', templateParams);
+      console.log('Using EmailJS config:', {
+        serviceId: emailjsConfig.serviceId,
+        templateId: emailjsConfig.templateId
+      });
 
       // Update UI to show sending state
       setSubmitStatus({
@@ -96,10 +108,10 @@ const Contact = () => {
         throw new Error(`Failed to send message: ${result.text}`);
       }
     } catch (error: any) {
-      console.error('Error details:', error);
+      console.error('Error sending email:', error);
       setSubmitStatus({
         type: 'error',
-        message: 'Failed to send message. Please try again or email me directly.',
+        message: `Failed to send message: ${error.message || 'Unknown error'}`,
       });
     } finally {
       setIsSubmitting(false);
@@ -180,9 +192,9 @@ const Contact = () => {
             <div className="flex flex-col items-center space-y-4">
               <button
                 type="submit"
-                disabled={isSubmitting}
-                className={`w-full md:w-auto min-w-[200px] px-8 py-3 text-white rounded-lg font-medium transition-all
-                  ${isSubmitting 
+                disabled={isSubmitting || !isEmailJSLoaded}
+                className={`relative w-full md:w-auto min-w-[200px] px-8 py-3 text-white rounded-lg font-medium transition-all
+                  ${(isSubmitting || !isEmailJSLoaded)
                     ? 'bg-blue-400 cursor-not-allowed' 
                     : 'bg-blue-600 hover:bg-blue-700'}`}
               >
@@ -197,36 +209,36 @@ const Contact = () => {
                 </span>
               </button>
 
-              {/* Always show the status container, but control visibility with opacity */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: submitStatus.message ? 1 : 0 }}
-                className={`w-full p-4 rounded-lg text-center ${
-                  submitStatus.type === 'success'
-                    ? 'bg-green-100 text-green-700 border-2 border-green-500'
-                    : submitStatus.type === 'error'
-                    ? 'bg-red-100 text-red-700 border-2 border-red-500'
-                    : 'bg-blue-100 text-blue-700 border-2 border-blue-500'
-                }`}
-                style={{ 
-                  display: submitStatus.message ? 'block' : 'none',
-                  marginTop: '1rem'
-                }}
-              >
-                <div className="flex items-center justify-center">
-                  {submitStatus.type === 'success' && (
-                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                  )}
-                  {submitStatus.type === 'error' && (
-                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                    </svg>
-                  )}
-                  <span className="font-medium">{submitStatus.message}</span>
+              {/* Status message */}
+              {(submitStatus.message || !isEmailJSLoaded) && (
+                <div
+                  className={`w-full p-4 rounded-lg text-center ${
+                    submitStatus.type === 'success'
+                      ? 'bg-green-100 text-green-700 border-2 border-green-500'
+                      : submitStatus.type === 'error'
+                      ? 'bg-red-100 text-red-700 border-2 border-red-500'
+                      : 'bg-blue-100 text-blue-700 border-2 border-blue-500'
+                  }`}
+                >
+                  <div className="flex items-center justify-center">
+                    {submitStatus.type === 'success' && (
+                      <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                    {submitStatus.type === 'error' && (
+                      <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                    <span className="font-medium">
+                      {!isEmailJSLoaded 
+                        ? 'Initializing email service...' 
+                        : submitStatus.message}
+                    </span>
+                  </div>
                 </div>
-              </motion.div>
+              )}
             </div>
           </form>
 
