@@ -13,25 +13,16 @@ const Contact = () => {
     message: string;
   }>({ type: null, message: '' });
 
-  // Add this to verify EmailJS is loaded
-  const [isEmailJSLoaded, setIsEmailJSLoaded] = useState(false);
-
   useEffect(() => {
-    // Initialize EmailJS with your public key
+    // Log that we're attempting to initialize
+    console.log('Attempting to initialize EmailJS...');
+    
     try {
+      // Initialize EmailJS
       emailjs.init(emailjsConfig.publicKey);
-      setIsEmailJSLoaded(true);
-      console.log('EmailJS initialized with config:', {
-        serviceId: emailjsConfig.serviceId,
-        templateId: emailjsConfig.templateId,
-        publicKey: emailjsConfig.publicKey.substring(0, 4) + '...'
-      });
+      console.log('EmailJS initialized successfully');
     } catch (error) {
-      console.error('Error initializing EmailJS:', error);
-      setSubmitStatus({
-        type: 'error',
-        message: 'Failed to initialize email service. Please try again later.',
-      });
+      console.error('Failed to initialize EmailJS:', error);
     }
   }, []);
 
@@ -44,55 +35,25 @@ const Contact = () => {
       return;
     }
 
-    if (!isEmailJSLoaded) {
-      console.error('EmailJS not initialized');
-      setSubmitStatus({
-        type: 'error',
-        message: 'Email service not initialized. Please refresh the page and try again.',
-      });
-      return;
-    }
-    
-    // Clear previous status and set submitting state
+    // Set submitting state immediately
     setIsSubmitting(true);
-    setSubmitStatus({ type: null, message: 'Starting submission...' });
+    setSubmitStatus({
+      type: null,
+      message: 'Sending message...'
+    });
 
     try {
       // Get form data
       const form = formRef.current;
-      const name = form.user_name.value;
-      const email = form.user_email.value;
-      const subject = form.subject.value;
-      const message = form.message.value;
+      
+      // Log that we're about to send
+      console.log('Preparing to send email...');
 
-      // Log the actual values being sent
-      console.log('Form values:', { name, email, subject, message });
-
-      // Create template parameters object
-      const templateParams = {
-        user_name: name,
-        user_email: email,
-        subject: subject,
-        message: message
-      };
-
-      console.log('Attempting to send email with params:', templateParams);
-      console.log('Using EmailJS config:', {
-        serviceId: emailjsConfig.serviceId,
-        templateId: emailjsConfig.templateId
-      });
-
-      // Update UI to show sending state
-      setSubmitStatus({
-        type: null,
-        message: 'Sending your message...'
-      });
-
-      // Send the email
-      const result = await emailjs.send(
+      // Try sending directly with emailjs.sendForm first
+      const result = await emailjs.sendForm(
         emailjsConfig.serviceId,
         emailjsConfig.templateId,
-        templateParams,
+        form,
         emailjsConfig.publicKey
       );
 
@@ -101,18 +62,50 @@ const Contact = () => {
       if (result.text === 'OK') {
         setSubmitStatus({
           type: 'success',
-          message: 'Thank you! Your message has been sent successfully.',
+          message: 'Message sent successfully! Thank you for reaching out.',
         });
         form.reset();
       } else {
-        throw new Error(`Failed to send message: ${result.text}`);
+        throw new Error('Failed to send message');
       }
     } catch (error: any) {
-      console.error('Error sending email:', error);
-      setSubmitStatus({
-        type: 'error',
-        message: `Failed to send message: ${error.message || 'Unknown error'}`,
-      });
+      console.error('Error sending message:', error);
+      
+      // Try alternative method if first method fails
+      try {
+        const form = formRef.current;
+        const templateParams = {
+          user_name: form.user_name.value,
+          user_email: form.user_email.value,
+          subject: form.subject.value,
+          message: form.message.value
+        };
+
+        console.log('Trying alternative send method...');
+        
+        const result = await emailjs.send(
+          emailjsConfig.serviceId,
+          emailjsConfig.templateId,
+          templateParams,
+          emailjsConfig.publicKey
+        );
+
+        if (result.text === 'OK') {
+          setSubmitStatus({
+            type: 'success',
+            message: 'Message sent successfully! Thank you for reaching out.',
+          });
+          form.reset();
+        } else {
+          throw new Error('Failed to send message');
+        }
+      } catch (secondError: any) {
+        console.error('Both send methods failed:', { error, secondError });
+        setSubmitStatus({
+          type: 'error',
+          message: 'Failed to send message. Please try again or email me directly.',
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -138,7 +131,6 @@ const Contact = () => {
                   name="user_name"
                   id="user_name"
                   required
-                  autoComplete="name"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Your name"
                 />
@@ -152,7 +144,6 @@ const Contact = () => {
                   name="user_email"
                   id="user_email"
                   required
-                  autoComplete="email"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Your email"
                 />
@@ -168,7 +159,6 @@ const Contact = () => {
                 name="subject"
                 id="subject"
                 required
-                autoComplete="off"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Subject of your message"
               />
@@ -183,7 +173,6 @@ const Contact = () => {
                 id="message"
                 required
                 rows={6}
-                autoComplete="off"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Your message"
               ></textarea>
@@ -192,11 +181,9 @@ const Contact = () => {
             <div className="flex flex-col items-center space-y-4">
               <button
                 type="submit"
-                disabled={isSubmitting || !isEmailJSLoaded}
+                disabled={isSubmitting}
                 className={`relative w-full md:w-auto min-w-[200px] px-8 py-3 text-white rounded-lg font-medium transition-all
-                  ${(isSubmitting || !isEmailJSLoaded)
-                    ? 'bg-blue-400 cursor-not-allowed' 
-                    : 'bg-blue-600 hover:bg-blue-700'}`}
+                  ${isSubmitting ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
               >
                 <span className="flex items-center justify-center">
                   {isSubmitting && (
@@ -209,36 +196,31 @@ const Contact = () => {
                 </span>
               </button>
 
-              {/* Status message */}
-              {(submitStatus.message || !isEmailJSLoaded) && (
-                <div
-                  className={`w-full p-4 rounded-lg text-center ${
-                    submitStatus.type === 'success'
-                      ? 'bg-green-100 text-green-700 border-2 border-green-500'
-                      : submitStatus.type === 'error'
-                      ? 'bg-red-100 text-red-700 border-2 border-red-500'
-                      : 'bg-blue-100 text-blue-700 border-2 border-blue-500'
-                  }`}
-                >
-                  <div className="flex items-center justify-center">
-                    {submitStatus.type === 'success' && (
-                      <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                    )}
-                    {submitStatus.type === 'error' && (
-                      <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                      </svg>
-                    )}
-                    <span className="font-medium">
-                      {!isEmailJSLoaded 
-                        ? 'Initializing email service...' 
-                        : submitStatus.message}
-                    </span>
-                  </div>
+              {/* Always show status container */}
+              <div
+                className={`w-full p-4 rounded-lg text-center transition-all duration-300 ${
+                  !submitStatus.message ? 'opacity-0' :
+                  submitStatus.type === 'success'
+                    ? 'bg-green-100 text-green-700 border-2 border-green-500'
+                    : submitStatus.type === 'error'
+                    ? 'bg-red-100 text-red-700 border-2 border-red-500'
+                    : 'bg-blue-100 text-blue-700 border-2 border-blue-500'
+                }`}
+              >
+                <div className="flex items-center justify-center">
+                  {submitStatus.type === 'success' && (
+                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                  {submitStatus.type === 'error' && (
+                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                  <span className="font-medium">{submitStatus.message}</span>
                 </div>
-              )}
+              </div>
             </div>
           </form>
 
