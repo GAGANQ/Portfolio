@@ -30,20 +30,38 @@ const Contact = () => {
       return;
     }
     
+    // Clear previous status and set submitting state
     setIsSubmitting(true);
     setSubmitStatus({ type: null, message: '' });
 
     try {
       // Get form data
-      const formData = new FormData(formRef.current);
+      const form = formRef.current;
+      const name = form.user_name.value;
+      const email = form.user_email.value;
+      const subject = form.subject.value;
+      const message = form.message.value;
+
+      // Log the actual values being sent
+      console.log('Sending form with values:', {
+        name,
+        email,
+        subject,
+        message
+      });
+
       const templateParams = {
-        user_name: formData.get('user_name'),
-        user_email: formData.get('user_email'),
-        subject: formData.get('subject'),
-        message: formData.get('message'),
+        user_name: name,
+        user_email: email,
+        subject: subject,
+        message: message,
       };
 
-      console.log('Sending email with params:', templateParams);
+      // Show sending state
+      setSubmitStatus({
+        type: null,
+        message: 'Sending your message...'
+      });
 
       const result = await emailjs.send(
         emailjsConfig.serviceId,
@@ -59,7 +77,7 @@ const Contact = () => {
           type: 'success',
           message: 'Thank you for your message! I will get back to you soon.',
         });
-        formRef.current.reset();
+        form.reset();
       } else {
         throw new Error(`Failed to send message: ${result.text}`);
       }
@@ -67,7 +85,7 @@ const Contact = () => {
       console.error('Error sending message:', error);
       setSubmitStatus({
         type: 'error',
-        message: error instanceof Error ? error.message : 'Something went wrong. Please try again later.',
+        message: 'Failed to send message. Please try again or contact me directly via email.',
       });
     } finally {
       setIsSubmitting(false);
@@ -141,7 +159,7 @@ const Contact = () => {
               ></textarea>
             </div>
 
-            <div className="text-center">
+            <div className="text-center space-y-4">
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -150,17 +168,21 @@ const Contact = () => {
               >
                 {isSubmitting ? 'Sending...' : 'Send Message'}
               </button>
-            </div>
 
-            {submitStatus.type && (
-              <div
-                className={`text-center p-4 rounded-lg ${
-                  submitStatus.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-                }`}
-              >
-                {submitStatus.message}
-              </div>
-            )}
+              {submitStatus.message && (
+                <div
+                  className={`text-center p-4 rounded-lg ${
+                    submitStatus.type === 'success' 
+                      ? 'bg-green-100 text-green-700' 
+                      : submitStatus.type === 'error'
+                      ? 'bg-red-100 text-red-700'
+                      : 'bg-blue-100 text-blue-700'
+                  }`}
+                >
+                  {submitStatus.message}
+                </div>
+              )}
+            </div>
           </form>
 
           <div className="mt-12 text-center">
