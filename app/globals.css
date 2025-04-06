@@ -1,8 +1,14 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #000000;
+  --foreground: #ffffff;
+  --accent: #3b82f6;
+  --accent-dark: #1d4ed8;
+  --gray-dark: #1f1f1f;
+  --gray-light: #e5e5e5;
 }
 
 @theme inline {
@@ -20,12 +26,88 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-  @apply bg-white text-gray-900;
+  background-color: black;
+  color: white;
+  font-family: 'Inter', Arial, sans-serif;
 }
 
 html {
   scroll-behavior: smooth;
+  background-color: black;
+}
+
+/* Modern Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--gray-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
+/* Modern Selection */
+::selection {
+  background: var(--accent);
+  color: white;
+}
+
+/* Modern Section Styles */
+.section-wrapper {
+  @apply relative backdrop-blur-md bg-white/5 rounded-2xl border border-white/10 shadow-xl;
+}
+
+.section-content {
+  @apply relative z-10 p-6 md:p-8;
+}
+
+/* Glass Cards */
+.glass-card {
+  @apply backdrop-blur-lg bg-white/5 rounded-xl border border-white/10 
+         shadow-lg hover:bg-white/10 transition-all duration-300;
+}
+
+/* Gradient Borders */
+.gradient-border {
+  @apply relative rounded-xl overflow-hidden;
+  background: linear-gradient(to right, #3b82f6, #1d4ed8);
+  padding: 1px;
+}
+
+.gradient-border > * {
+  @apply bg-black rounded-xl;
+}
+
+/* Gradient Text */
+.gradient-text {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-blue-600;
+}
+
+/* Hover Effects */
+.hover-lift {
+  @apply transition-transform duration-300 hover:-translate-y-1;
+}
+
+/* Background Patterns */
+.dot-pattern {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Glass Effect */
+.glass-effect {
+  @apply backdrop-blur-lg bg-black/30 border border-white/10;
+}
+
+/* Smooth transitions */
+.transition-all {
+  @apply transition-all duration-300 ease-in-out;
 }

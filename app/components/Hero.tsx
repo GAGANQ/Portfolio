@@ -5,18 +5,18 @@ import Image from 'next/image';
 
 export default function Hero() {
   return (
-    <section id="hero" className="relative min-h-screen flex items-center">
+    <section id="hero" className="relative min-h-screen flex items-center dot-pattern">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <Image
           src="/profile.jpg"
           alt="Gagandeep Dhaliwal"
           fill
-          className="object-cover"
+          className="object-cover opacity-50"
           priority
           quality={100}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/50"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-black/90"></div>
       </div>
 
       {/* Content */}
@@ -25,17 +25,19 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="max-w-3xl"
+          className="glass-card p-8 md:p-12 max-w-3xl"
         >
-          <h2 className="text-xl md:text-2xl font-medium text-blue-400 mb-4">
+          <h2 className="gradient-text text-xl md:text-2xl font-medium mb-4">
             Hello, I'm
           </h2>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6">
             Gagandeep Dhaliwal
           </h1>
-          <p className="text-xl md:text-2xl text-gray-300 mb-8">
-            Accounts Payable & Receivable Specialist | Payroll Administrator
-          </p>
+          <div className="gradient-border mb-8">
+            <p className="text-xl md:text-2xl text-gray-300 p-4">
+              Accounts Payable & Receivable Specialist | Payroll Administrator
+            </p>
+          </div>
           <p className="text-lg text-gray-400 mb-12 max-w-2xl">
             Results-driven professional with 4+ years of experience in financial management, 
             accounting operations, and ERP system optimization. Expert in Microsoft Dynamics 365, 
@@ -50,7 +52,7 @@ export default function Hero() {
           >
             <a
               href="#contact"
-              className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-300 flex items-center"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg transition-colors duration-300 flex items-center hover-lift"
             >
               Contact Me
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
@@ -59,7 +61,7 @@ export default function Hero() {
             </a>
             <a
               href="#projects"
-              className="border-2 border-white text-white px-8 py-3 rounded-lg hover:bg-white hover:text-black transition-all duration-300"
+              className="glass-card px-8 py-3 text-white hover-lift"
             >
               View Projects
             </a>
@@ -74,7 +76,7 @@ export default function Hero() {
           >
             <div className="flex flex-col items-center text-white">
               <span className="text-sm mb-2">Scroll Down</span>
-              <div className="w-6 h-10 border-2 border-white rounded-full flex justify-center p-2">
+              <div className="glass-card w-6 h-10 flex justify-center p-2">
                 <motion.div
                   animate={{
                     y: [0, 12, 0],
