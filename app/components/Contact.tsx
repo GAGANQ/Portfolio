@@ -3,6 +3,12 @@
 import React, { useRef, useState, useEffect } from 'react';
 import emailjs from '@emailjs/browser';
 
+const EMAILJS_CONFIG = {
+  serviceId: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || '',
+  templateId: process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || '',
+  publicKey: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || ''
+};
+
 const Contact = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -13,14 +19,13 @@ const Contact = () => {
 
   useEffect(() => {
     const initEmailJS = () => {
-      const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
-      if (!publicKey) {
+      if (!EMAILJS_CONFIG.publicKey) {
         console.error('EmailJS public key is not set');
         return;
       }
       try {
-        emailjs.init(publicKey);
-        console.log('EmailJS initialized in Contact component');
+        emailjs.init(EMAILJS_CONFIG.publicKey);
+        console.log('EmailJS initialized in Contact component with key:', EMAILJS_CONFIG.publicKey);
       } catch (error) {
         console.error('Failed to initialize EmailJS:', error);
       }
@@ -41,6 +46,14 @@ const Contact = () => {
       return;
     }
 
+    if (!EMAILJS_CONFIG.serviceId || !EMAILJS_CONFIG.templateId || !EMAILJS_CONFIG.publicKey) {
+      setSubmitStatus({
+        type: 'error',
+        message: 'Email service configuration is missing. Please try again later or email me directly.',
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitStatus({
       type: null,
@@ -49,20 +62,11 @@ const Contact = () => {
 
     try {
       const form = formRef.current;
-      
-      // Check if environment variables are available
-      const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
-      const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
-      const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
-
-      if (!serviceId || !templateId || !publicKey) {
-        throw new Error('EmailJS configuration is incomplete. Please check environment variables.');
-      }
 
       console.log('Using EmailJS configuration:', {
-        serviceId,
-        templateId,
-        publicKey: publicKey.substring(0, 5) + '...'
+        serviceId: EMAILJS_CONFIG.serviceId,
+        templateId: EMAILJS_CONFIG.templateId,
+        publicKey: EMAILJS_CONFIG.publicKey.substring(0, 5) + '...'
       });
 
       const formData = {
@@ -75,10 +79,10 @@ const Contact = () => {
       console.log('Sending form data:', formData);
 
       const result = await emailjs.sendForm(
-        serviceId,
-        templateId,
+        EMAILJS_CONFIG.serviceId,
+        EMAILJS_CONFIG.templateId,
         form,
-        publicKey
+        EMAILJS_CONFIG.publicKey
       );
 
       console.log('EmailJS Response:', result);
