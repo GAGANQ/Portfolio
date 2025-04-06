@@ -20,6 +20,15 @@ const Contact = () => {
       return;
     }
 
+    if (!(window as any).emailjs) {
+      console.error('EmailJS not loaded');
+      setSubmitStatus({
+        type: 'error',
+        message: 'Email service not initialized. Please try again in a few seconds.',
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitStatus({
       type: null,
@@ -180,10 +189,10 @@ const Contact = () => {
           <div className="mt-12 text-center">
             <p className="text-gray-600 mb-4">Prefer to reach out directly?</p>
             <a
-              href="mailto:gagandhaliwal1997@gmail.com"
+              href="mailto:gagan98dhaliwal@gmail.com"
               className="text-blue-600 hover:text-blue-700 font-medium"
             >
-              gagandhaliwal1997@gmail.com
+              gagan98dhaliwal@gmail.com
             </a>
           </div>
         </div>

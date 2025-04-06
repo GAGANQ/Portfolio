@@ -15,19 +15,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="scroll-smooth">
       <head>
         <script 
           type="text/javascript" 
-          src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
-        </script>
-        <script type="text/javascript">
-          {`
-            (function() {
-              emailjs.init("${process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY}");
-            })();
-          `}
-        </script>
+          src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
+          defer
+        ></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.onload = function() {
+                if (window.emailjs) {
+                  emailjs.init("${process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY}");
+                  console.log('EmailJS initialized on window load');
+                } else {
+                  console.error('EmailJS not found');
+                }
+              }
+            `
+          }}
+        />
       </head>
       <body className={inter.className}>{children}</body>
     </html>
