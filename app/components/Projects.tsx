@@ -25,7 +25,7 @@ const projects = [
 
 export default function Projects() {
   return (
-    <section id="projects" className="py-20 bg-gray-50">
+    <section id="projects" className="py-20 bg-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -34,7 +34,7 @@ export default function Projects() {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Key Achievements</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Key Achievements</h2>
           <div className="w-24 h-1 bg-blue-600 mx-auto"></div>
         </motion.div>
 
@@ -48,13 +48,13 @@ export default function Projects() {
               viewport={{ once: true }}
               className="glass-card overflow-hidden hover:shadow-xl transition-shadow p-6"
             >
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">{project.title}</h3>
-              <p className="text-gray-600 mb-4">{project.description}</p>
+              <h3 className="text-xl font-semibold text-white mb-2">{project.title}</h3>
+              <p className="text-gray-300 mb-4">{project.description}</p>
               <div className="flex flex-wrap gap-2">
                 {project.technologies.map((tech, techIndex) => (
                   <span
                     key={techIndex}
-                    className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm"
+                    className="px-3 py-1 bg-blue-900/30 text-blue-300 rounded-full text-sm"
                   >
                     {tech}
                   </span>

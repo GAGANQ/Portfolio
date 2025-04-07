@@ -55,13 +55,13 @@ export default function Experience() {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Work Experience</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Work Experience</h2>
           <div className="w-24 h-1 bg-blue-600 mx-auto"></div>
         </motion.div>
 
         <div className="relative">
           {/* Timeline line */}
-          <div className="absolute left-0 top-0 h-full w-1 bg-gray-200 md:left-1/2 md:transform md:-translate-x-1/2"></div>
+          <div className="absolute left-0 top-0 h-full w-1 bg-gray-700 md:left-1/2 md:transform md:-translate-x-1/2"></div>
 
           {experiences.map((experience, index) => (
             <motion.div
@@ -77,16 +77,16 @@ export default function Experience() {
               <div className="md:w-5/12">
                 <div className="glass-card p-6 rounded-lg shadow-lg">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xl font-semibold text-gray-900">{experience.position}</h3>
-                    <span className="text-sm text-gray-500">{experience.period}</span>
+                    <h3 className="text-xl font-semibold text-white">{experience.position}</h3>
+                    <span className="text-sm text-gray-400">{experience.period}</span>
                   </div>
-                  <h4 className="text-lg text-blue-600 mb-2">{experience.company}</h4>
-                  <p className="text-sm text-gray-500 mb-4">{experience.location}</p>
+                  <h4 className="text-lg text-blue-400 mb-2">{experience.company}</h4>
+                  <p className="text-sm text-gray-400 mb-4">{experience.location}</p>
                   <ul className="space-y-2">
                     {experience.description.map((item, itemIndex) => (
                       <li key={itemIndex} className="flex items-start">
                         <svg
-                          className="w-5 h-5 text-blue-600 mt-1 mr-2"
+                          className="w-5 h-5 text-blue-400 mt-1 mr-2"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -98,7 +98,7 @@ export default function Experience() {
                             d="M5 13l4 4L19 7"
                           />
                         </svg>
-                        <span className="text-gray-600">{item}</span>
+                        <span className="text-gray-300">{item}</span>
                       </li>
                     ))}
                   </ul>
