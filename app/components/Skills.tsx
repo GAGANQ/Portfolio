@@ -8,10 +8,10 @@ const skills = [
   { name: 'Financial Reporting', level: 90, category: 'Financial' },
   { name: 'Tax Compliance', level: 85, category: 'Financial' },
   { name: 'Bank Reconciliation', level: 90, category: 'Financial' },
-  { name: 'Microsoft Dynamics 365', level: 85, category: 'Technical' },
-  { name: 'SAP', level: 80, category: 'Technical' },
+  { name: 'Microsoft Dynamics 365', level: 90, category: 'Technical' },
+  { name: 'SAP', level: 85, category: 'Technical' },
   { name: 'QuickBooks', level: 90, category: 'Technical' },
-  { name: 'Power BI', level: 85, category: 'Technical' },
+  { name: 'Power BI & SQL', level: 85, category: 'Technical' },
   { name: 'Process Automation', level: 85, category: 'Technical' },
 ];
 
@@ -94,4 +94,4 @@ export default function Skills() {
       </div>
     </section>
   );
-} 
+}

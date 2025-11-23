@@ -35,7 +35,7 @@ export default function Hero() {
           >
             Hello, I'm
           </motion.h2>
-          
+
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -55,7 +55,7 @@ export default function Hero() {
             className="gradient-border mb-8"
           >
             <p className="text-xl md:text-2xl text-gray-300 p-4">
-              Accounts Payable & Receivable Specialist | Payroll Administrator
+              Financial Systems Analyst & ERP Administrator
             </p>
           </motion.div>
 
@@ -65,9 +65,7 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.8 }}
             className="text-lg text-gray-400 mb-12 max-w-2xl"
           >
-            Results-driven professional with 4+ years of experience in financial management, 
-            accounting operations, and ERP system optimization. Expert in Microsoft Dynamics 365, 
-            SAP, QuickBooks, and Power BI.
+            Accounting & IT professional with 5+ years of experience bridging financial operations and enterprise systems administration. Expert in Dynamics 365, SAP, and process automation.
           </motion.p>
 
           <motion.div
@@ -121,4 +119,4 @@ export default function Hero() {
       </div>
     </section>
   );
-} 
+}

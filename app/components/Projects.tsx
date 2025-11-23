@@ -4,22 +4,22 @@ import { motion } from 'framer-motion';
 
 const projects = [
   {
-    title: 'Multi-Company Financial Management',
+    title: 'Papersave Implementation',
     description:
-      'Successfully managed accounts payable operations for multiple companies within Friesen Group, implementing efficient processes and ensuring accurate financial reporting.',
-    technologies: ['Microsoft Dynamics 365', 'Payroll Systems', 'Document Management'],
+      'Led the implementation of Papersave Cloud Document Management, acting as the primary liaison between the AP team and IT Manager. Translated AP requirements into system configurations for improved document organization.',
+    technologies: ['Papersave', 'System Implementation', 'Project Management'],
   },
   {
-    title: 'Financial Process Automation',
+    title: 'Reporting Automation',
     description:
-      'Led the implementation of automated financial processes, including payroll stub customization and invoice report generation, resulting in improved efficiency.',
-    technologies: ['Process Automation', 'Financial Reporting', 'System Integration'],
+      'Implemented reporting automation using Microsoft Dynamics GP and Power BI. Reduced manual data entry and improved the accuracy of financial reporting for budgeting and forecasting.',
+    technologies: ['Power BI', 'Dynamics GP', 'SQL', 'Automation'],
   },
   {
-    title: 'Accounts Receivable Optimization',
+    title: 'Dynamics GP Customization',
     description:
-      'Streamlined accounts receivable processes at Triple Eight Transport, implementing efficient payment processing and reconciliation systems.',
-    technologies: ['Moneris', 'PeopleNet', 'Financial Analysis'],
+      'Collaborated with the AR team to develop and customize invoice templates within Microsoft Dynamics GP. Improved formatting and delivery efficiency for customer invoices.',
+    technologies: ['Dynamics GP', 'Report Writer', 'Template Design'],
   },
 ];
 
@@ -66,4 +66,4 @@ export default function Projects() {
       </div>
     </section>
   );
-} 
+}

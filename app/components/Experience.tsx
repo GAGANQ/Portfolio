@@ -4,17 +4,29 @@ import { motion } from 'framer-motion';
 
 const experiences = [
   {
-    company: 'Friesen Group of Companies',
-    position: 'Senior Accounts Payable & Payroll Administrator',
-    period: 'Oct 2023 - Present',
+    company: 'University of the Fraser Valley',
+    position: 'Officer, Accounts Payable',
+    period: 'May 2025 - Present',
     location: 'Abbotsford, BC',
     description: [
-      'Manage accounts payable operations for multiple companies, ensuring invoice processing and vendor reconciliations',
-      'Conduct bank reconciliations, budgeting, and financial forecasting',
-      'Oversee payroll processing using TimeClock Plus & ADP systems',
-      'Lead new software implementations and serve as liaison between IT and accounting',
-      'Develop customized payroll stubs and invoice reports in Microsoft Dynamics GP',
-      'Utilize Papersave Cloud Document Management for document organization and approvals',
+      'Manage full-cycle accounts payable, processing high-volume invoices and reconciling vendor statements',
+      'Ensure accurate coding of expenses to proper cost accounts in compliance with GAAP',
+      'Administer EFT and cheque disbursements; reconcile AP sub-ledger to general ledger',
+      'Leverage Banner ERP and CentreSuite for invoice processing and expense reporting',
+      'Collaborate with IT and finance to implement process improvements',
+    ],
+  },
+  {
+    company: 'Friesen Group of Companies',
+    position: 'Senior Accounts Payable & Payroll Administrator',
+    period: 'Oct 2023 - May 2025',
+    location: 'Abbotsford, BC',
+    description: [
+      'Processed 60+ invoices daily and managed payroll for 80+ employees across 10+ entities',
+      'Led budgeting, forecasting, and GST audit preparation',
+      'Implemented reporting automation using Papersave, Dynamics GP, and Power BI',
+      'Acted as liaison between AP team and IT Manager during Papersave implementation',
+      'Collaborated with AR team to customize Dynamics GP invoice templates',
     ],
   },
   {
@@ -23,11 +35,9 @@ const experiences = [
     period: 'Jun 2023 - Oct 2023',
     location: 'Abbotsford, BC',
     description: [
-      'Led AR transactions, invoicing, and financial reporting',
-      'Managed credit card payments and bank deposits',
-      'Processed Moneris payments and reconciled PeopleNet transactions',
-      'Assisted with financial statement preparation and aging reports',
-      'Provided cross-functional support in payroll processing',
+      'Managed end-to-end AR processing, credit control, and collections',
+      'Maintained AR aging reports, reconciliations, and month-end journal entries',
+      'Provided cross-functional support to AP and payroll',
     ],
   },
   {
@@ -36,10 +46,18 @@ const experiences = [
     period: 'Jun 2022 - Oct 2022',
     location: 'Abbotsford, BC',
     description: [
-      'Managed AP & AR functions, ensuring timely payments and collections',
-      'Handled cash flow records and prepared bank reconciliations',
-      'Generated detailed financial reports',
-      'Assisted in payroll processing and tax compliance',
+      'Managed AP/AR workflows, bank reconciliations, and GL entries',
+      'Assisted with GST/HST remittance and financial documentation for compliance',
+    ],
+  },
+  {
+    company: "McDonald's Canada",
+    position: 'Manager',
+    period: 'May 2018 - Sep 2022',
+    location: 'Abbotsford, BC',
+    description: [
+      'Promoted through multiple roles to lead shift operations and team training',
+      'Ensured customer service excellence and operational efficiency',
     ],
   },
 ];
@@ -70,9 +88,8 @@ export default function Experience() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.2 }}
               viewport={{ once: true }}
-              className={`relative mb-8 md:flex ${
-                index % 2 === 0 ? 'md:justify-start' : 'md:justify-end'
-              }`}
+              className={`relative mb-8 md:flex ${index % 2 === 0 ? 'md:justify-start' : 'md:justify-end'
+                }`}
             >
               <div className="md:w-5/12">
                 <div className="glass-card p-6 rounded-lg shadow-lg">
@@ -110,4 +127,4 @@ export default function Experience() {
       </div>
     </section>
   );
-} 
+}

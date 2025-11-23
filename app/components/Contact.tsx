@@ -35,7 +35,7 @@ const Contact = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log('Form submission started');
-    
+
     if (!formRef.current) {
       console.error('Form reference is not available');
       return;
@@ -171,13 +171,12 @@ const Contact = () => {
 
               {submitStatus.message && (
                 <div
-                  className={`w-full p-4 rounded-lg text-center ${
-                    submitStatus.type === 'success'
-                      ? 'bg-green-100 text-green-700 border-2 border-green-500'
-                      : submitStatus.type === 'error'
+                  className={`w-full p-4 rounded-lg text-center ${submitStatus.type === 'success'
+                    ? 'bg-green-100 text-green-700 border-2 border-green-500'
+                    : submitStatus.type === 'error'
                       ? 'bg-red-100 text-red-700 border-2 border-red-500'
                       : 'bg-blue-100 text-blue-700 border-2 border-blue-500'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center justify-center">
                     {submitStatus.type === 'success' && (
@@ -199,12 +198,16 @@ const Contact = () => {
 
           <div className="mt-12 text-center">
             <p className="text-gray-600 mb-4">Prefer to reach out directly?</p>
-            <a
-              href="mailto:gagan98dhaliwal@gmail.com"
-              className="text-blue-600 hover:text-blue-700 font-medium"
-            >
-              gagan98dhaliwal@gmail.com
-            </a>
+            <div className="flex flex-col items-center space-y-2">
+              <a
+                href="mailto:gagan98dhaliwal@gmail.com"
+                className="text-blue-600 hover:text-blue-700 font-medium"
+              >
+                gagan98dhaliwal@gmail.com
+              </a>
+              <span className="text-gray-600">+1 236-887-5366</span>
+              <span className="text-gray-500 text-sm">Abbotsford, BC</span>
+            </div>
           </div>
         </div>
       </div>
@@ -212,4 +215,4 @@ const Contact = () => {
   );
 };
 
-export default Contact; 
+export default Contact;
